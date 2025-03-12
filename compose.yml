@@ -1,13 +1,5 @@
 services:
-  lateplate:
-    restart: always
-    network_mode: host
-    build:
-      context: ./lateplate
-      dockerfile: ./Dockerfile
-    container_name: lateplate
-    volumes:
-      - ./lateplate/lateplate:/app/lateplate:ro
+  app:
+    build: .
     env_file:
       - .env
-    command: poetry run python -m lateplate.main
