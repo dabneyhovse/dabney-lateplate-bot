@@ -25,7 +25,7 @@ const formatMenu = (menu) => {
         .join("\n\n");
 };
 
-const postMenu = () => {
+const postMenu = (destChat = chatId) => {
     const daysOfWeek = [
         "sunday",
         "monday",
@@ -40,7 +40,7 @@ const postMenu = () => {
 
     fetchPrettyMenu(sheetsApiKey).then((menu) => {
         const menuForToday = menu[dayOfWeek];
-        bot.sendMessage(chatId, formatMenu(menuForToday), {
+        bot.sendMessage(destChat, formatMenu(menuForToday), {
             parse_mode: "MarkdownV2"
         });
     });
@@ -52,4 +52,8 @@ cron.schedule("0 6 * * 1-5", () => {
 
 bot.onText(/\/start/, (msg) => {
     bot.sendMessage(msg.chat.id, "i love lateplates");
+});
+
+bot.onText(/\/menu/, (msg) => {
+    postMenu(msg.chat.id);
 });
