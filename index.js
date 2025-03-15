@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import cron from "node-cron";
 import dotenv from "dotenv";
-import { fetchPrettyMenu } from "@torus/cds-api";
+import { fetchPrettyMenu } from "@torus/caltech-dining-api";
 
 dotenv.config();
 
@@ -40,13 +40,17 @@ const postMenu = (destChat = chatId) => {
 
     fetchPrettyMenu(sheetsApiKey).then((menu) => {
         const menuForToday = menu[dayOfWeek];
-        bot.sendMessage(destChat, formatMenu(menuForToday), {
+        if (!menuForToday) {
+            bot.sendMessage(destChat, "No menu available for today.");
+            return;
+        }
+        bot.sendMessage(destChat, `Menu for Today: ${formatMenu(menuForToday)}`, {
             parse_mode: "MarkdownV2"
         });
     });
 };
 
-cron.schedule("0 6 * * 1-5", () => {
+cron.schedule("30 17 * * 1-5", () => {
     postMenu();
 });
 
