@@ -44,7 +44,7 @@ const postMenu = (destChat = chatId) => {
             bot.sendMessage(destChat, "No menu available for today.");
             return;
         }
-        bot.sendMessage(destChat, `Menu for Today: ${formatMenu(menuForToday)}`, {
+        bot.sendMessage(destChat, `__Menu for Today:__ \n\n${formatMenu(menuForToday)}`, {
             parse_mode: "MarkdownV2"
         });
     });
@@ -60,4 +60,12 @@ bot.onText(/\/start/, (msg) => {
 
 bot.onText(/\/menu/, (msg) => {
     postMenu(msg.chat.id);
+});
+
+bot.onText(/\/wee/, (msg) => {
+    bot.sendMessage(msg.chat.id, "/hoo");
+});
+
+bot.onText(/\/hoo/, (msg) => {
+    bot.sendMessage(msg.chat.id, "/wee");
 });
