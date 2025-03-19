@@ -1,4 +1,4 @@
-import TelegramBot from "node-telegram-bot-api";
+import { Bot } from "grammy";
 import cron from "node-cron";
 import dotenv from "dotenv";
 import { fetchPrettyMenu } from "@torus/caltech-dining-api";
@@ -9,7 +9,7 @@ const token = process.env.BOT_TOKEN;
 const chatId = process.env.CHAT_ID;
 const sheetsApiKey = process.env.SHEETS_API_KEY;
 
-const bot = new TelegramBot(token, { polling: true });
+const bot = new Bot(token);
 
 const formatMenu = (menu) => {
     return Object.keys(menu)
@@ -41,10 +41,10 @@ const postMenu = (destChat = chatId) => {
     fetchPrettyMenu(sheetsApiKey).then((menu) => {
         const menuForToday = menu[dayOfWeek];
         if (!menuForToday) {
-            bot.sendMessage(destChat, "No menu available for today.");
+            bot.api.sendMessage(destChat, "No menu available for today.");
             return;
         }
-        bot.sendMessage(destChat, `__Menu for Today:__ \n\n${formatMenu(menuForToday)}`, {
+        bot.api.sendMessage(destChat, `__Menu for Today:__ \n\n${formatMenu(menuForToday)}`, {
             parse_mode: "MarkdownV2"
         });
     });
@@ -54,18 +54,22 @@ cron.schedule("30 17 * * 1-5", () => {
     postMenu();
 });
 
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "i love lateplates");
+// Command handlers
+bot.command("start", (ctx) => {
+    ctx.reply("i love lateplates");
 });
 
-bot.onText(/\/menu/, (msg) => {
-    postMenu(msg.chat.id);
+bot.command("menu", (ctx) => {
+    postMenu(ctx.chat.id);
 });
 
-bot.onText(/\/wee/, (msg) => {
-    bot.sendMessage(msg.chat.id, "/hoo");
+bot.command("wee", (ctx) => {
+    ctx.reply("/hoo");
 });
 
-bot.onText(/\/hoo/, (msg) => {
-    bot.sendMessage(msg.chat.id, "/wee");
+bot.command("hoo", (ctx) => {
+    ctx.reply("/wee");
 });
+
+// Start the bot
+bot.start();
