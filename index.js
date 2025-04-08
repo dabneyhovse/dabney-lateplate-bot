@@ -15,10 +15,10 @@ const formatMenu = (menu) => {
     return Object.keys(menu)
         .map((key) => {
             return (
-                "__" +
+                "<u>" +
                 key.charAt(0).toUpperCase() +
                 key.slice(1) +
-                "__:\n" +
+                "</u>:\n" +
                 menu[key].map((item) => item.dish).join("\n")
             );
         })
@@ -44,8 +44,8 @@ const postMenu = (destChat = chatId) => {
             bot.api.sendMessage(destChat, "No menu available for today.");
             return;
         }
-        bot.api.sendMessage(destChat, `__Menu for Today:__ \n\n${formatMenu(menuForToday)}`, {
-            parse_mode: "MarkdownV2"
+        bot.api.sendMessage(destChat, `<u>Menu for Today</u>: \n\n${formatMenu(menuForToday)}`, {
+            parse_mode: "HTML"
         });
     });
 };
