@@ -38,23 +38,19 @@ const formatMenu = (menu) => {
         .join("\n\n");
 };
 
-const menuResponse = async () => {
+const getMenuMessage = async () => {
     const today = new Date().getDay();
     const dayOfWeek = daysOfWeek[today];
 
     const menu = await fetchPrettyMenu(sheetsApiKey);
     const menuForToday = menu[dayOfWeek];
-    if (!menuForToday) return { text: "No menu available for today." };
+    if (!menuForToday) return "No menu available for today.";
 
-    return {
-        text: `<u>Menu for Today</u>: \n\n${formatMenu(menuForToday)}`,
-        options: { parse_mode: "HTML" },
-    };
+    return `<u>Menu for Today</u>: \n\n${formatMenu(menuForToday)}`;
 };
 
 const postMenu = async (destChat = chatId) => {
-    const response = await menuResponse();
-    await bot.api.sendMessage(destChat, response.text, response.options);
+    await bot.api.sendMessage(destChat, await getMenuMessage(), { parse_mode: "HTML" });
 };
 
 cron.schedule("30 17 * * 1-5", () => {
@@ -71,8 +67,7 @@ bot.command("menu", (ctx) => {
 });
 
 bot.command("meownu", async (ctx) => {
-    const response = await menuResponse();
-    await ctx.reply(uwuifier.uwuifySentence(response.text), response.options);
+    await ctx.reply(uwuifier.uwuifySentence(await getMenuMessage()), { parse_mode: "HTML" });
 });
 
 bot.command("wee", (ctx) => {
