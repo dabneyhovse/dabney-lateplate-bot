@@ -20,6 +20,9 @@ importers:
       node-cron:
         specifier: ^3.0.3
         version: 3.0.3
+      uwuifier:
+        specifier: 4.2.2
+        version: 4.2.2
 
 packages:
 
@@ -182,6 +185,9 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
+  uwuifier@4.2.2:
+    resolution: {integrity: sha512-Fhtj3Yg3rrDTEs+L1fqkgM3VYGJrP4U9GY+4fPdw08T5kzOB8NSosZnZfa5Zhv1Hh7NCpH5G6t1DIZyM1wPK1w==}
+
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -336,6 +342,8 @@ snapshots:
   tr46@0.0.3: {}
 
   uuid@8.3.2: {}
+
+  uwuifier@4.2.2: {}
 
   webidl-conversions@3.0.1: {}
 

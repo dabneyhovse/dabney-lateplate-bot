@@ -1,6 +1,7 @@
 import { Bot } from "grammy";
 import cron from "node-cron";
 import dotenv from "dotenv";
+import Uwuifier from "uwuifier";
 import { fetchPrettyMenu } from "@torus/caltech-dining-api";
 
 dotenv.config();
@@ -10,6 +11,18 @@ const chatId = process.env.CHAT_ID;
 const sheetsApiKey = process.env.SHEETS_API_KEY;
 
 const bot = new Bot(token);
+const uwuifier = new Uwuifier();
+uwuifier.faces = [":3", ":3"];
+
+const daysOfWeek = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+];
 
 const formatMenu = (menu) => {
     return Object.keys(menu)
@@ -25,29 +38,23 @@ const formatMenu = (menu) => {
         .join("\n\n");
 };
 
-const postMenu = (destChat = chatId) => {
-    const daysOfWeek = [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-    ];
+const menuResponse = async () => {
     const today = new Date().getDay();
     const dayOfWeek = daysOfWeek[today];
 
-    fetchPrettyMenu(sheetsApiKey).then((menu) => {
-        const menuForToday = menu[dayOfWeek];
-        if (!menuForToday) {
-            bot.api.sendMessage(destChat, "No menu available for today.");
-            return;
-        }
-        bot.api.sendMessage(destChat, `<u>Menu for Today</u>: \n\n${formatMenu(menuForToday)}`, {
-            parse_mode: "HTML"
-        });
-    });
+    const menu = await fetchPrettyMenu(sheetsApiKey);
+    const menuForToday = menu[dayOfWeek];
+    if (!menuForToday) return { text: "No menu available for today." };
+
+    return {
+        text: `<u>Menu for Today</u>: \n\n${formatMenu(menuForToday)}`,
+        options: { parse_mode: "HTML" },
+    };
+};
+
+const postMenu = async (destChat = chatId) => {
+    const response = await menuResponse();
+    await bot.api.sendMessage(destChat, response.text, response.options);
 };
 
 cron.schedule("30 17 * * 1-5", () => {
@@ -61,6 +68,11 @@ bot.command("start", (ctx) => {
 
 bot.command("menu", (ctx) => {
     postMenu(ctx.chat.id);
+});
+
+bot.command("meownu", async (ctx) => {
+    const response = await menuResponse();
+    await ctx.reply(uwuifier.uwuifySentence(response.text), response.options);
 });
 
 bot.command("wee", (ctx) => {
